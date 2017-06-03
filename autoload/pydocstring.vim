@@ -161,18 +161,23 @@ function! s:builddocstring(strs, indent, nested_indent)
     elseif line =~ '{{_args_}}'
       if len(args) != 0
         for arg in args
-          let arg = substitute(arg, '=.*$', '', '')
+	      let optionalstr = ""		 
+	      if arg =~ "=.*$"
+			  let arg = substitute(arg, '=.*$', '', '')
+			  let optionalstr = ", optional"
+		  endif
           if arg =~ g:pydocstring_ignore_args_pattern
             continue
           endif
           let template = line
           let typed = 0
           if match(arg, ':') != -1
-            let argTemplate = s:readtmpl('arg')
             let argTemplate = join(s:readtmpl('arg'), '')
             let argParts = split(arg, ':')
             let argTemplate = substitute(argTemplate, '{{_name_}}', argParts[0], 'g')
-            let arg = substitute(argTemplate, '{{_type_}}', argParts[1], 'g')
+            let argTemplate = substitute(argTemplate, '{{_type_}}', argParts[1], 'g')
+            let arg = substitute(argTemplate, '{{_optional_}}', optionalstr, 'g')
+			echom arg
             let typed = 1
           endif
           let template = substitute(template, '{{_args_}}', arg, 'g')
@@ -208,7 +213,7 @@ function! s:builddocstring(strs, indent, nested_indent)
     elseif line =~ '{{_returnType_}}'
       if strlen(returnType) != 0
         let rt = substitute(line, '{{_returnType_}}', returnType, '')
-        call add(docstrings, a:indent . rt)
+        call add(docstrings, a:indent . a:indent . rt)
       else
         call remove(docstrings, -1)
       endif

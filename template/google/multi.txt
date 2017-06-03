@@ -1,0 +1,9 @@
+{{_indent_}}"""A one line description of your function.
+
+{{_indent_}}Multi-line, in-depth description.
+
+{{_indent_}}Args:
+{{_indent_}}{{_args_}}
+{{_indent_}}Returns:
+{{_returnType_}}: 
+"""
